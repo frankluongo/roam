@@ -1,0 +1,66 @@
+$league: #{League Gothic, 'Roboto Condensed', sans-serif};
+
+@mixin league-gothic {
+  font-family: $league;
+  font-weight: 300;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+$max-width: 73.125em;
+
+$orange: #e87722;
+$gray-1: #d9d9d6;
+$gray-2: #a7a8aa;
+
+$breakpoint-sizes: (
+  xsmall: 0,
+  small: 640px,
+  medium: 960px,
+  large: 1280px,
+  xlarge: 1440px,
+);
+
+@function breakpoint($size) {
+  @return map-get($breakpoint-sizes, $size);
+}
+
+@function max-size($breakpoint-value) {
+  @return (breakpoint($breakpoint-value) - 1)
+}
+
+$breakpoints: (
+  xsmall: 0,
+  xsmall only: (0, max-size(small) ),
+
+  small: breakpoint(small),
+  small down: (0, max-size(medium) ),
+  small only: (breakpoint(small), max-size(medium) ),
+
+  medium: breakpoint(medium),
+  medium down: (0, max-size(medium)),
+  medium only: (breakpoint(medium), max-size(large) ),
+
+  large: breakpoint(large),
+  large down: ( 0, breakpoint(large) ),
+  large only: (breakpoint(large), max-size(xlarge)),
+
+  xlarge: breakpoint(xlarge),
+);
+
+@mixin breakpoint($break) {
+  @each $breakpoint, $value in $breakpoints {
+    @if ($break == $breakpoint) {
+      @if type-of($value) == list {
+        @media screen and (min-width: nth($value, 1)) and (max-width: nth($value, 2)) {
+          @content;
+        }
+      } @else {
+        @media screen and (min-width: $value) {
+          @content;
+        }
+      }
+    }
+  }
+}
+
